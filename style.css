@@ -3432,3 +3432,38 @@ footer .copyright {
     color: #777;
     letter-spacing: 4px;
 }
+
+/* =================================
+   ACCESSIBILITY
+================================= */
+
+button:focus-visible,
+a:focus-visible {
+
+    outline: 2px solid #ff9933;
+
+    outline-offset: 4px;
+
+    border-radius: 6px;
+}
+
+/* =================================
+   REDUCED MOTION
+================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+    }
+
+}

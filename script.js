@@ -1211,6 +1211,18 @@ const soundToggle =
 
 if (soundToggle && bgMusic) {
 
+    // Initial accessibility state
+    soundToggle.setAttribute(
+        "aria-label",
+        "Turn background music on"
+    );
+
+    soundToggle.setAttribute(
+        "aria-pressed",
+        "false"
+    );
+
+
     soundToggle.addEventListener(
         "click",
         async () => {
@@ -1227,6 +1239,19 @@ if (soundToggle && bgMusic) {
                     soundToggle.classList.add(
                         "active"
                     );
+
+
+                    // Accessibility state
+                    soundToggle.setAttribute(
+                        "aria-label",
+                        "Turn background music off"
+                    );
+
+                    soundToggle.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
+
 
                 } catch (error) {
 
@@ -1245,6 +1270,18 @@ if (soundToggle && bgMusic) {
 
                 soundToggle.classList.remove(
                     "active"
+                );
+
+
+                // Accessibility state
+                soundToggle.setAttribute(
+                    "aria-label",
+                    "Turn background music on"
+                );
+
+                soundToggle.setAttribute(
+                    "aria-pressed",
+                    "false"
                 );
 
             }
