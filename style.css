@@ -3467,3 +3467,268 @@ a:focus-visible {
     }
 
 }
+
+/* =================================
+   404 ERROR PAGE
+================================= */
+
+.error-page {
+
+    min-height: 100vh;
+
+    margin: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #101010 0%,
+            #030303 55%,
+            #000 100%
+        );
+
+    color: white;
+
+    font-family:
+        Arial,
+        sans-serif;
+}
+
+
+.error-glow {
+
+    position: fixed;
+
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9933,
+            transparent 40%,
+            transparent 60%,
+            #138808
+        );
+
+    opacity: .08;
+
+    filter: blur(100px);
+
+    animation:
+        errorGlow 6s ease-in-out infinite alternate;
+}
+
+
+.error-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+
+    padding: 30px;
+
+}
+
+
+.error-chakra {
+
+    font-size: 70px;
+
+    color: #1a4f9c;
+
+    margin-bottom: 20px;
+
+    animation:
+        chakraSpin 10s linear infinite;
+}
+
+
+.error-label {
+
+    color: #ff9933;
+
+    font-size: 10px;
+
+    letter-spacing: 5px;
+
+    margin-bottom: 10px;
+}
+
+
+.error-content h1 {
+
+    margin: 0;
+
+    font-size: clamp(
+        100px,
+        18vw,
+        220px
+    );
+
+    line-height: .85;
+
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff9933,
+            white,
+            #138808
+        );
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    color: transparent;
+
+}
+
+
+.error-content h2 {
+
+    margin-top: 25px;
+
+    font-size: 18px;
+
+    letter-spacing: 6px;
+
+}
+
+
+.error-message {
+
+    max-width: 420px;
+
+    margin: 18px auto 30px;
+
+    color: #777;
+
+    line-height: 1.7;
+
+    font-size: 13px;
+
+}
+
+
+.error-button {
+
+    display: inline-block;
+
+    padding: 13px 24px;
+
+    border:
+        1px solid rgba(
+            255,
+            255,
+            255,
+            .15
+        );
+
+    border-radius: 30px;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .05
+        );
+
+    transition: .3s;
+}
+
+
+.error-button:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        #ff9933;
+
+    background:
+        rgba(
+            255,
+            153,
+            51,
+            .08
+        );
+
+}
+
+
+.error-code {
+
+    margin-top: 35px;
+
+    color: #333;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+}
+
+
+@keyframes errorGlow {
+
+    from {
+        transform: scale(.9);
+    }
+
+    to {
+        transform: scale(1.1);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .error-content h2 {
+
+        font-size: 14px;
+
+        letter-spacing: 3px;
+
+    }
+
+    .error-message {
+
+        font-size: 12px;
+
+    }
+
+    .error-chakra {
+
+        font-size: 55px;
+
+    }
+
+}
