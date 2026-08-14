@@ -1179,56 +1179,84 @@ enterIndia.addEventListener(
 ================================= */
 
 const cursorDot =
-    document.querySelector(
-        ".cursor-dot"
-    );
+    document.querySelector(".cursor-dot");
 
 const cursorRing =
-    document.querySelector(
-        ".cursor-ring"
+    document.querySelector(".cursor-ring");
+
+let mouseX = 0;
+let mouseY = 0;
+
+let cursorX = 0;
+let cursorY = 0;
+
+let cursorAnimation;
+
+
+function updateCursor() {
+
+    cursorX +=
+        (mouseX - cursorX) * 0.18;
+
+    cursorY +=
+        (mouseY - cursorY) * 0.18;
+
+
+    if (cursorDot) {
+
+        cursorDot.style.transform =
+            `translate3d(
+                ${mouseX}px,
+                ${mouseY}px,
+                0
+            )`;
+
+    }
+
+
+    if (cursorRing) {
+
+        cursorRing.style.transform =
+            `translate3d(
+                ${cursorX}px,
+                ${cursorY}px,
+                0
+            )`;
+
+    }
+
+
+    cursorAnimation =
+        requestAnimationFrame(
+            updateCursor
+        );
+
+}
+
+
+if (
+    cursorDot &&
+    cursorRing &&
+    window.matchMedia(
+        "(pointer: fine)"
+    ).matches
+) {
+
+    document.addEventListener(
+        "mousemove",
+        (e) => {
+
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+        },
+        { passive: true }
     );
 
 
-document.addEventListener(
-    "mousemove",
-    (e) => {
+    updateCursor();
 
-        if (cursorDot) {
-
-            cursorDot.style.left =
-                e.clientX + "px";
-
-            cursorDot.style.top =
-                e.clientY + "px";
-
-        }
-
-
-        if (cursorRing) {
-
-            cursorRing.animate(
-
-                {
-                    left:
-                        e.clientX + "px",
-
-                    top:
-                        e.clientY + "px"
-
-                },
-
-                {
-                    duration: 400,
-
-                    fill: "forwards"
-                }
-
-            );
-
-        }
-
-    }
-);
+}
 
 /* =================================
    CURSOR HOVER
