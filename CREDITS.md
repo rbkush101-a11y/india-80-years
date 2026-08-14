@@ -13,3 +13,13 @@ https://creativecommons.org/licenses/by-sa/3.0/
 
 The map has been modified/styled for this project
 using CSS effects and animations.
+
+
+## Background Music
+
+"Epic Patriotic" by The_Mountain
+Source: Pixabay
+
+https://pixabay.com/music/epic-classical-epic-patriotic-508014/
+
+Used under the Pixabay Content License.
