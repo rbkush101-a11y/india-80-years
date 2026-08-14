@@ -557,82 +557,96 @@ function missionBurst(card) {
 
 function bigCelebration() {
 
-    for (let i = 0; i < 150; i++) {
+    const colors = [
+        "#ff9933",
+        "#ffffff",
+        "#138808"
+    ];
 
-        setTimeout(() => {
-
-            const particle =
-                document.createElement("div");
-
-            particle.className =
-                "firework";
-
-
-            particle.style.left =
-                window.innerWidth / 2 +
-                "px";
-
-            particle.style.top =
-                window.innerHeight / 2 +
-                "px";
+    const particleCount =
+        window.innerWidth <= 600
+            ? 60
+            : 100;
 
 
-            const angle =
-                Math.random() *
-                Math.PI * 2;
-
-            const distance =
-                Math.random() * 600 +
-                100;
+    const fragment =
+        document.createDocumentFragment();
 
 
-            particle.style.setProperty(
-                "--x",
-                Math.cos(angle) *
-                distance +
-                "px"
-            );
+    const centerX =
+        window.innerWidth / 2;
+
+    const centerY =
+        window.innerHeight / 2;
 
 
-            particle.style.setProperty(
-                "--y",
-                Math.sin(angle) *
-                distance +
-                "px"
-            );
+    for (let i = 0; i < particleCount; i++) {
+
+        const particle =
+            document.createElement("div");
+
+        particle.className =
+            "firework";
 
 
-            const colors = [
-                "#ff9933",
-                "#ffffff",
-                "#138808"
+        particle.style.left =
+            centerX + "px";
+
+        particle.style.top =
+            centerY + "px";
+
+
+        const angle =
+            Math.random() *
+            Math.PI * 2;
+
+        const distance =
+            Math.random() * 500 + 100;
+
+
+        particle.style.setProperty(
+            "--x",
+            `${Math.cos(angle) * distance}px`
+        );
+
+        particle.style.setProperty(
+            "--y",
+            `${Math.sin(angle) * distance}px`
+        );
+
+
+        particle.style.background =
+            colors[
+                Math.floor(
+                    Math.random() *
+                    colors.length
+                )
             ];
 
 
-            particle.style.background =
-                colors[
-                    Math.floor(
-                        Math.random() *
-                        colors.length
-                    )
-                ];
-
-
-            document.body.appendChild(
-                particle
-            );
-
-
-            setTimeout(() => {
-
-                particle.remove();
-
-            }, 1200);
-
-
-        }, i * 10);
+        fragment.appendChild(
+            particle
+        );
 
     }
+
+
+    document.body.appendChild(
+        fragment
+    );
+
+
+    setTimeout(() => {
+
+        document
+            .querySelectorAll(
+                ".firework"
+            )
+            .forEach(
+                particle => particle.remove()
+            );
+
+    }, 1300);
 
 }
 
