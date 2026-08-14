@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        🇮🇳 IN INDIA 80 — India's Journey to the Future
+    </title>
+
+
+    <!-- SEO -->
+
+    <meta
+        name="description"
+        content="IN INDIA 80 — An interactive cinematic web experience celebrating India's journey, technology and future."
+    >
+
+    <meta
+        name="keywords"
+        content="India 80 years, Independence Day 2026, India, technology, web development, Rishabh Kushwaha"
+    >
+
+    <meta
+        name="author"
+        content="Rishabh Kushwaha"
+    >
+
+    <meta
+        name="theme-color"
+        content="#050505"
+    >
+
+
+    <!-- SOCIAL PREVIEW -->
+
+    <meta
+        property="og:title"
+        content="IN INDIA 80 — India's Journey to the Future"
+    >
+
+    <meta
+        property="og:description"
+        content="A cinematic interactive web experience celebrating India's journey, technology and future."
+    >
+
+    <meta
+        property="og:type"
+        content="website"
+    >
+
+    <meta
+        property="og:site_name"
+        content="IN INDIA 80"
+    >
+
+
+    <!-- FAVICON -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="favicon.png"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="favicon.png"
+    >
+
+
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+        <!-- =================================
+        CINEMATIC LOADING SCREEN
+    ================================= -->
+
+    <div class="loader" id="loader">
+
+        <div class="loader-content">
+
+            <div class="loader-chakra">
+                ☸
+            </div>
+
+            <p class="loader-label">
+                INITIALIZING INDIA...
+            </p>
+
+            <div class="loader-bar">
+
+                <div
+                    class="loader-progress"
+                    id="loaderProgress">
+                </div>
+
+            </div>
+
+            <div class="loader-percent">
+                <span id="loaderPercent">0</span>%
+            </div>
+
+            <h1 id="loaderStatus">
+                SYSTEM INITIALIZING
+            </h1>
+
+            <button
+                id="enterIndia"
+                class="enter-india">
+
+                ENTER INDIA 🇮🇳
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Background particles -->
+    <canvas id="particles"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <div class="logo">
+            🇮🇳 INDIA<span>80</span>
+        </div>
+
+        <ul class="nav-links">
+            <li>
+                <a href="#home">Home</a>
+            </li>
+
+            <li>
+                <a href="#journey">Journey</a>
+            </li>
+
+            <li>
+                <a href="#technology">Technology</a>
+            </li>
+        </ul>
+
+        <!-- SOUND BUTTON -->
+        <button
+            id="soundToggle"
+            class="sound-toggle">
+            🔇 SOUND OFF
+        </button>
+
+    </nav>
+
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero">
+        <div class="hero-glow"></div>
+
+        <div class="tricolor-orbit">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <p class="date">15 AUGUST 2026</p>
+
+    <!-- COUNTDOWN -->
+
+        <div class="countdown">
+
+            <div class="count-box">
+                <strong id="days">00</strong>
+                <span>DAYS</span>
+            </div>
+
+            <div class="count-box">
+                <strong id="hours">00</strong>
+                <span>HOURS</span>
+            </div>
+
+            <div class="count-box">
+                <strong id="minutes">00</strong>
+                <span>MINUTES</span>
+            </div>
+
+            <div class="count-box">
+                <strong id="seconds">00</strong>
+                <span>SECONDS</span>
+            </div>
+
+        </div>
+
+        <h1>INDIA</h1>
+
+        <!-- PREMIUM INDIAN FLAG -->
+
+    <div class="flag-wrapper">
+
+        <div class="flag">
+
+            <div class="flag-stripe saffron"></div>
+
+            <div class="flag-stripe white">
+                <div class="ashoka-wheel">
+
+                    <div class="chakra-center"></div>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+            </div>
+
+            <div class="flag-stripe green"></div>
+
+        </div>
+
+    </div>
+
+        <h2>80 YEARS OF FREEDOM</h2>
+
+        <p class="tagline" id="typing">
+            WE CODE • WE BUILD • WE GROW
+        </p>
+
+        <button onclick="celebrate()">
+            ENTER EXPERIENCE →
+        </button>
+
+    </section>
+
+
+    <!-- MESSAGE -->
+    <section class="message">
+
+        <p class="small-title">A NATION OF DREAMERS</p>
+
+        <h2>
+            The future is not waiting.<br>
+            <span>We are building it.</span>
+        </h2>
+
+        <p>
+            From independence to innovation,
+            India's journey continues with technology,
+            creativity and courage.
+        </p>
+
+    </section>
+
+
+    <!-- TECHNOLOGY -->
+    <section id="technology" class="technology">
+
+        <p class="small-title">INDIA × TECHNOLOGY</p>
+
+        <h2>Building The Future</h2>
+
+        <div class="cards">
+
+            <div class="card reveal">
+                <div>🤖</div>
+                <h3>Artificial Intelligence</h3>
+                <p>Building intelligent solutions for tomorrow.</p>
+            </div>
+
+            <div class="card reveal">
+                <div>🚀</div>
+                <h3>Space Technology</h3>
+                <p>Exploring beyond the boundaries.</p>
+            </div>
+
+            <div class="card reveal">
+                <div>💻</div>
+                <h3>Digital India</h3>
+                <p>Connecting people through technology.</p>
+            </div>
+
+            <div class="card reveal">
+                <div>🔬</div>
+                <h3>Innovation</h3>
+                <p>Turning ideas into reality.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+        <!-- =========================
+        MISSION SECTION
+    ========================= -->
+
+    <section class="mission-section" id="mission">
+
+        <p class="small-title">THE NEXT GENERATION</p>
+
+        <h2>MISSION: BUILD NEW INDIA</h2>
+
+        <p class="mission-subtitle">
+            Five missions. One vision. One future.
+        </p>
+
+
+        <!-- Progress -->
+
+        <div class="mission-progress">
+
+            <div class="progress-top">
+                <span>MISSION PROGRESS</span>
+                <span id="progressText">0 / 5</span>
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    id="progressFill">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Mission Cards -->
+
+        <div class="mission-grid">
+
+            <div
+                class="mission-card reveal"
+                data-mission="AI">
+
+                <div class="mission-number">01</div>
+
+                <div class="mission-icon">🤖</div>
+
+                <h3>AI & Innovation</h3>
+
+                <p>
+                    Build intelligent solutions
+                    for a smarter tomorrow.
+                </p>
+
+                <button class="mission-btn">
+                    START MISSION
+                </button>
+
+            </div>
+
+
+            <div
+                class="mission-card reveal"
+                data-mission="SPACE">
+
+                <div class="mission-number">02</div>
+
+                <div class="mission-icon">🚀</div>
+
+                <h3>Space & Science</h3>
+
+                <p>
+                    Explore beyond boundaries
+                    and reach new heights.
+                </p>
+
+                <button class="mission-btn">
+                    START MISSION
+                </button>
+
+            </div>
+
+
+            <div
+                class="mission-card reveal"
+                data-mission="DIGITAL">
+
+                <div class="mission-number">03</div>
+
+                <div class="mission-icon">💻</div>
+
+                <h3>Digital India</h3>
+
+                <p>
+                    Connect every citizen
+                    through technology.
+                </p>
+
+                <button class="mission-btn">
+                    START MISSION
+                </button>
+
+            </div>
+
+
+            <div
+                class="mission-card reveal"
+                data-mission="EDUCATION">
+
+                <div class="mission-number">04</div>
+
+                <div class="mission-icon">📚</div>
+
+                <h3>Education</h3>
+
+                <p>
+                    Empower young minds
+                    through knowledge.
+                </p>
+
+                <button class="mission-btn">
+                    START MISSION
+                </button>
+
+            </div>
+
+
+            <div
+                class="mission-card reveal"
+                data-mission="GREEN">
+
+                <div class="mission-number">05</div>
+
+                <div class="mission-icon">🌱</div>
+
+                <h3>Green India</h3>
+
+                <p>
+                    Build a cleaner,
+                    greener future.
+                </p>
+
+                <button class="mission-btn">
+                    START MISSION
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+        <!-- =================================
+        INTERACTIVE INDIA
+    ================================= -->
+
+    <section class="india-section" id="india">
+
+        <div class="india-heading reveal">
+
+            <p class="small-title">
+                ONE NATION • ONE FUTURE
+            </p>
+
+            <h2>
+                INDIA
+                <span>IN MOTION.</span>
+            </h2>
+
+            <p>
+                Technology is connecting every
+                dream, every mind and every possibility.
+            </p>
+
+        </div>
+
+
+        <div class="india-experience">
+
+
+            <!-- INDIA MAP -->
+
+            <div class="india-map-container">
+
+                <div class="map-glow"></div>
+
+                <img
+                    src="india.svg"
+                    class="india-map"
+                    id="indiaMap"
+                    alt="India"
+                >
+
+
+                <!-- TECH NODES -->
+
+                <div
+                    class="tech-node node-1"
+                    data-title="AI & Innovation"
+                    data-text="Building intelligent solutions for tomorrow."
+                >
+                    <span></span>
+                </div>
+
+
+                <div
+                    class="tech-node node-2"
+                    data-title="Space Technology"
+                    data-text="Exploring beyond boundaries."
+                >
+                    <span></span>
+                </div>
+
+
+                <div
+                    class="tech-node node-3"
+                    data-title="Digital India"
+                    data-text="Connecting people through technology."
+                >
+                    <span></span>
+                </div>
+
+
+                <div
+                    class="tech-node node-4"
+                    data-title="Education"
+                    data-text="Empowering the next generation."
+                >
+                    <span></span>
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION PANEL -->
+
+            <div class="india-info">
+
+                <p class="info-number">
+                    01 — 04
+                </p>
+
+                <h3 id="indiaInfoTitle">
+                    Technology
+                </h3>
+
+                <p id="indiaInfoText">
+                    Move over the glowing points
+                    to explore India's future.
+                </p>
+
+                <div class="info-line"></div>
+
+                <span>
+                    EXPLORE THE FUTURE →
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+        <!-- =================================
+        INDIA 2047 SECTION
+    ================================= -->
+
+    <section class="future-section" id="future">
+
+        <div class="future-bg"></div>
+
+        <div class="future-content reveal">
+
+            <p class="future-label">
+                THE NEXT CHAPTER
+            </p>
+
+            <div class="future-year">
+                2047
+            </div>
+
+            <h2>
+                INDIA
+            </h2>
+
+            <p class="future-description">
+                A century of freedom.
+                A future powered by dreams,
+                technology and innovation.
+            </p>
+
+        </div>
+
+
+        <!-- FUTURE STATS -->
+
+        <div class="future-stats">
+
+            <div class="future-stat reveal">
+
+                <span>01</span>
+
+                <strong>AI</strong>
+
+                <p>
+                    Intelligence
+                </p>
+
+            </div>
+
+
+            <div class="future-stat reveal">
+
+                <span>02</span>
+
+                <strong>SPACE</strong>
+
+                <p>
+                    Exploration
+                </p>
+
+            </div>
+
+
+            <div class="future-stat reveal">
+
+                <span>03</span>
+
+                <strong>EDU</strong>
+
+                <p>
+                    Knowledge
+                </p>
+
+            </div>
+
+
+            <div class="future-stat reveal">
+
+                <span>04</span>
+
+                <strong>TECH</strong>
+
+                <p>
+                    Innovation
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINAL MESSAGE -->
+
+        <div class="future-message reveal">
+
+            <div class="mini-chakra">
+                ☸
+            </div>
+
+            <h3>
+                THE NEXT CHAPTER
+                <br>
+                <span>IS OURS.</span>
+            </h3>
+
+            <p>
+                #CodeForIndia 🇮🇳
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+        FINAL REVEAL
+    ========================= -->
+
+    <div
+        class="final-reveal"
+        id="finalReveal">
+
+        <div class="reveal-content">
+
+            <div class="reveal-chakra">☸</div>
+
+            <p>MISSION COMPLETE</p>
+
+            <h1>INDIA 2047</h1>
+
+            <h2>THE FUTURE IS BEING CODED.</h2>
+
+            <span>#CodeForIndia 🇮🇳</span>
+
+            <button onclick="closeReveal()">
+                CONTINUE →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CODER SECTION -->
+    <section class="coder reveal">
+
+        <p class="small-title">FOR THE DEVELOPERS</p>
+
+        <div class="code-box">
+
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <pre><code>
+while (India.isGrowing()) {
+
+    innovate();
+    learn();
+    build();
+
+}
+            </code></pre>
+
+        </div>
+
+        <h2>
+            We don't just write code.<br>
+            <span>We write the future.</span>
+        </h2>
+
+    </section>
+
+
+    <!-- TIMELINE -->
+    <section id="journey" class="journey">
+
+        <p class="small-title">THE JOURNEY</p>
+
+        <h2>From Freedom to Future</h2>
+
+        <div class="timeline-item reveal">
+
+            <div>
+                <strong>1947</strong>
+                <p>🇮🇳 Independence</p>
+            </div>
+
+            <div>
+                <strong>1950</strong>
+                <p>📜 Constitution</p>
+            </div>
+
+            <div>
+                <strong>2000s</strong>
+                <p>💻 Digital Revolution</p>
+            </div>
+
+            <div>
+                <strong>2026</strong>
+                <p>🚀 Future</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <h2>THE FUTURE IS BEING CODED.</h2>
+
+        <p>#CodeForIndia 🇮🇳</p>
+
+        <p class="copyright">
+            Happy Independence Day • 15 August 2026
+        </p>
+
+    </footer>
+
+    <!-- CUSTOM CURSOR -->
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    
+    <audio
+        id="bgMusic"
+        src="music.mp3"
+        loop>
+    </audio>
+    
+    <!-- =================================
+     DEVELOPER FOOTER
+================================= -->
+
+<footer class="developer-footer">
+
+    <div class="footer-glow"></div>
+
+    <div class="footer-content">
+
+        <!-- BRAND -->
+
+        <div class="footer-brand reveal">
+
+            <div class="footer-chakra">
+                ☸
+            </div>
+
+            <h2>
+                🇮🇳 INDIA<span>80</span>
+            </h2>
+
+            <p>
+                A cinematic web experience
+                celebrating India's journey,
+                technology and future.
+            </p>
+
+        </div>
+
+
+        <!-- DEVELOPER -->
+
+        <div class="developer-card reveal">
+
+            <p class="developer-label">
+                DESIGNED & DEVELOPED BY
+            </p>
+
+            <h3>
+                RISHABH KUSHWAHA
+            </h3>
+
+            <p class="developer-role">
+                Developer • Coder • Creator
+            </p>
+
+            <div class="developer-tech">
+
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JAVASCRIPT</span>
+
+            </div>
+
+            <div class="developer-links">
+
+                <a
+                    href="https://github.com/rbkush101-a11y"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    GitHub
+                </a>
+
+                <a
+                    href="https://www.linkedin.com/in/rishabh-kushwaha10"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    LinkedIn
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- CODE -->
+
+        <div class="footer-code reveal">
+
+            <p>
+                &lt;india&gt;
+            </p>
+
+            <p>
+                &nbsp;&nbsp;build();
+            </p>
+
+            <p>
+                &nbsp;&nbsp;innovate();
+            </p>
+
+            <p>
+                &nbsp;&nbsp;inspire();
+            </p>
+
+            <p>
+                &lt;/india&gt;
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTTOM -->
+
+    <div class="footer-bottom">
+
+        <p>
+            Built with ❤️ & Code for India 🇮🇳
+        </p>
+
+        <p>
+            © 2026 Rishabh Kushwaha
+        </p>
+
+    </div>
+
+</footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
