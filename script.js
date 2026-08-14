@@ -1,16 +1,37 @@
 /* =================================
+   PERFORMANCE CONFIG
+================================= */
+
+const isMobile =
+    window.matchMedia("(max-width: 600px)").matches;
+
+const isTouchDevice =
+    window.matchMedia("(pointer: coarse)").matches;
+
+const prefersReducedMotion =
+    window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+/* =================================
    PARTICLE BACKGROUND
 ================================= */
 
-const canvas = document.getElementById("particles");
+const canvas =
+    document.getElementById("particles");
 
-if (canvas) {
+let particleAnimation = null;
+let particlesRunning = true;
 
-    const ctx = canvas.getContext("2d");
+if (canvas && !prefersReducedMotion) {
+
+    const ctx =
+        canvas.getContext("2d", {
+            alpha: true
+        });
 
     let particles = [];
-    let animationFrame;
-    let isRunning = true;
 
     const colors = [
         "#ff9933",
@@ -19,16 +40,72 @@ if (canvas) {
     ];
 
 
-    /* -----------------------------
-       CANVAS SIZE
-    ----------------------------- */
+    function getParticleCount() {
+
+        if (isMobile || isTouchDevice) {
+            return 25;
+        }
+
+        if (window.innerWidth <= 1000) {
+            return 60;
+        }
+
+        return 100;
+    }
+
+
+    function createParticles() {
+
+        particles = [];
+
+        const count =
+            getParticleCount();
+
+        for (let i = 0; i < count; i++) {
+
+            particles.push({
+
+                x:
+                    Math.random() *
+                    window.innerWidth,
+
+                y:
+                    Math.random() *
+                    window.innerHeight,
+
+                size:
+                    Math.random() * 1.6 + 0.6,
+
+                speedX:
+                    (Math.random() - 0.5) * 0.35,
+
+                speedY:
+                    (Math.random() - 0.5) * 0.35,
+
+                color:
+                    colors[
+                        Math.floor(
+                            Math.random() *
+                            colors.length
+                        )
+                    ]
+
+            });
+
+        }
+
+    }
+
 
     function resizeCanvas() {
 
-        const dpr = Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
+        const dpr =
+            isMobile
+                ? 1
+                : Math.min(
+                    window.devicePixelRatio || 1,
+                    1.5
+                );
 
         canvas.width =
             window.innerWidth * dpr;
@@ -52,83 +129,20 @@ if (canvas) {
         );
 
         createParticles();
-    }
-
-
-    /* -----------------------------
-       ADAPTIVE PARTICLE COUNT
-    ----------------------------- */
-
-    function getParticleCount() {
-
-        if (window.innerWidth <= 600) {
-            return 50;
-        }
-
-        if (window.innerWidth <= 1000) {
-            return 80;
-        }
-
-        return 110;
-    }
-
-
-    /* -----------------------------
-       CREATE PARTICLES
-    ----------------------------- */
-
-    function createParticles() {
-
-        particles = [];
-
-        const count =
-            getParticleCount();
-
-        for (let i = 0; i < count; i++) {
-
-            particles.push({
-
-                x:
-                    Math.random() *
-                    window.innerWidth,
-
-                y:
-                    Math.random() *
-                    window.innerHeight,
-
-                size:
-                    Math.random() * 2 + 1,
-
-                speedX:
-                    (Math.random() - 0.5) * 0.4,
-
-                speedY:
-                    (Math.random() - 0.5) * 0.4,
-
-                color:
-                    colors[
-                        Math.floor(
-                            Math.random() *
-                            colors.length
-                        )
-                    ]
-
-            });
-
-        }
 
     }
 
 
-    /* -----------------------------
-       ANIMATION
-    ----------------------------- */
+    function animateParticles() {
 
-    function animate() {
-
-        if (!isRunning) {
+        if (
+            !particlesRunning ||
+            document.hidden
+        ) {
+            particleAnimation = null;
             return;
         }
+
 
         ctx.clearRect(
             0,
@@ -137,10 +151,18 @@ if (canvas) {
             window.innerHeight
         );
 
-        ctx.globalAlpha = 0.7;
+        ctx.globalAlpha = 0.65;
 
 
-        particles.forEach(p => {
+        for (
+            let i = 0;
+            i < particles.length;
+            i++
+        ) {
+
+            const p =
+                particles[i];
+
 
             ctx.beginPath();
 
@@ -166,9 +188,7 @@ if (canvas) {
                 p.x < 0 ||
                 p.x > window.innerWidth
             ) {
-
                 p.speedX *= -1;
-
             }
 
 
@@ -176,34 +196,24 @@ if (canvas) {
                 p.y < 0 ||
                 p.y > window.innerHeight
             ) {
-
                 p.speedY *= -1;
-
             }
 
-        });
+        }
 
 
-        animationFrame =
+        particleAnimation =
             requestAnimationFrame(
-                animate
+                animateParticles
             );
 
     }
 
 
-    /* -----------------------------
-       START
-    ----------------------------- */
-
     resizeCanvas();
 
-    animate();
+    animateParticles();
 
-
-    /* -----------------------------
-       RESIZE
-    ----------------------------- */
 
     let resizeTimer;
 
@@ -218,16 +228,13 @@ if (canvas) {
             resizeTimer =
                 setTimeout(
                     resizeCanvas,
-                    150
+                    200
                 );
 
-        }
+        },
+        { passive: true }
     );
 
-
-    /* -----------------------------
-       PAUSE WHEN TAB IS HIDDEN
-    ----------------------------- */
 
     document.addEventListener(
         "visibilitychange",
@@ -235,17 +242,27 @@ if (canvas) {
 
             if (document.hidden) {
 
-                isRunning = false;
+                particlesRunning =
+                    false;
 
-                cancelAnimationFrame(
-                    animationFrame
-                );
+                if (particleAnimation) {
+
+                    cancelAnimationFrame(
+                        particleAnimation
+                    );
+
+                    particleAnimation =
+                        null;
+                }
 
             } else {
 
-                isRunning = true;
+                particlesRunning =
+                    true;
 
-                animate();
+                if (!particleAnimation) {
+                    animateParticles();
+                }
 
             }
 
@@ -261,61 +278,164 @@ if (canvas) {
 
 function startExperience() {
 
-    document
-        .getElementById("technology")
-        .scrollIntoView({
-            behavior: "smooth"
+    const technology =
+        document.getElementById(
+            "technology"
+        );
+
+    if (technology) {
+
+        technology.scrollIntoView({
+            behavior:
+                prefersReducedMotion
+                    ? "auto"
+                    : "smooth"
         });
-
-}
-
-/* =========================
-   TYPING EFFECT
-========================= */
-
-const text = "WE CODE • WE BUILD • WE GROW";
-
-const typing = document.getElementById("typing");
-
-let index = 0;
-
-function typeText() {
-
-    if (index < text.length) {
-
-        typing.textContent += text.charAt(index);
-
-        index++;
-
-        setTimeout(typeText, 70);
 
     }
 
 }
 
-typeText();
+
+/* =================================
+   TYPING EFFECT
+================================= */
+
+const typing =
+    document.getElementById("typing");
+
+const typingText =
+    "WE CODE • WE BUILD • WE GROW";
 
 
-/* =========================
+if (
+    typing &&
+    !prefersReducedMotion
+) {
+
+    let typingIndex = 0;
+
+    function typeText() {
+
+        if (
+            typingIndex <
+            typingText.length
+        ) {
+
+            typing.textContent +=
+                typingText.charAt(
+                    typingIndex
+                );
+
+            typingIndex++;
+
+            setTimeout(
+                typeText,
+                70
+            );
+
+        }
+
+    }
+
+    typeText();
+
+} else if (typing) {
+
+    typing.textContent =
+        typingText;
+
+}
+
+
+/* =================================
    MOUSE GLOW
-========================= */
+================================= */
 
-const glow = document.querySelector(".hero-glow");
-
-document.addEventListener("mousemove", (e) => {
-
-    glow.style.left =
-        e.clientX - 250 + "px";
-
-    glow.style.top =
-        e.clientY - 250 + "px";
-
-});
+const glow =
+    document.querySelector(
+        ".hero-glow"
+    );
 
 
-/* =========================
+/*
+   Desktop only.
+   Mobile/touch devices don't
+   need mouse glow.
+*/
+
+if (
+    glow &&
+    !isMobile &&
+    !isTouchDevice &&
+    !prefersReducedMotion
+) {
+
+    let glowX = 0;
+    let glowY = 0;
+
+    let glowTargetX = 0;
+    let glowTargetY = 0;
+
+    let glowFrame = null;
+
+
+    document.addEventListener(
+        "mousemove",
+        (e) => {
+
+            glowTargetX =
+                e.clientX - 250;
+
+            glowTargetY =
+                e.clientY - 250;
+
+
+            if (!glowFrame) {
+
+                glowFrame =
+                    requestAnimationFrame(
+                        updateGlow
+                    );
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    function updateGlow() {
+
+        glowX +=
+            (glowTargetX - glowX) *
+            0.15;
+
+        glowY +=
+            (glowTargetY - glowY) *
+            0.15;
+
+
+        glow.style.transform =
+            `translate3d(
+                ${glowX}px,
+                ${glowY}px,
+                0
+            )`;
+
+
+        glowFrame = null;
+
+    }
+
+}
+
+
+/* =================================
    TRICOLOR FIREWORK
-========================= */
+================================= */
 
 function celebrate() {
 
@@ -325,24 +445,70 @@ function celebrate() {
         "#138808"
     ];
 
-    for (let i = 0; i < 100; i++) {
+
+    const count =
+        isMobile
+            ? 35
+            : 70;
+
+
+    const fragment =
+        document.createDocumentFragment();
+
+
+    const centerX =
+        window.innerWidth / 2;
+
+    const centerY =
+        window.innerHeight / 2;
+
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
 
         const particle =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        particle.className = "firework";
+        particle.className =
+            "firework";
 
-        const angle =
-            Math.random() * Math.PI * 2;
-
-        const distance =
-            Math.random() * 300 + 100;
 
         particle.style.left =
-            window.innerWidth / 2 + "px";
+            centerX + "px";
 
         particle.style.top =
-            window.innerHeight / 2 + "px";
+            centerY + "px";
+
+
+        const angle =
+            Math.random() *
+            Math.PI * 2;
+
+        const distance =
+            Math.random() *
+            (isMobile ? 220 : 300) +
+            70;
+
+
+        particle.style.setProperty(
+            "--x",
+            Math.cos(angle) *
+            distance +
+            "px"
+        );
+
+        particle.style.setProperty(
+            "--y",
+            Math.sin(angle) *
+            distance +
+            "px"
+        );
+
 
         particle.style.background =
             colors[
@@ -352,128 +518,183 @@ function celebrate() {
                 )
             ];
 
-        particle.style.setProperty(
-            "--x",
-            Math.cos(angle) * distance + "px"
+
+        fragment.appendChild(
+            particle
         );
-
-        particle.style.setProperty(
-            "--y",
-            Math.sin(angle) * distance + "px"
-        );
-
-        document.body.appendChild(particle);
-
-        setTimeout(() => {
-
-            particle.remove();
-
-        }, 1000);
 
     }
 
-    document
-        .getElementById("technology")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+
+    document.body.appendChild(
+        fragment
+    );
+
+
+    setTimeout(
+        () => {
+
+            document
+                .querySelectorAll(
+                    ".firework"
+                )
+                .forEach(
+                    particle =>
+                        particle.remove()
+                );
+
+        },
+        1100
+    );
+
+
+    startExperience();
 
 }
 
-/* =========================
+
+/* =================================
    MISSION SYSTEM
-========================= */
+================================= */
 
 const missions =
-    document.querySelectorAll(".mission-card");
+    document.querySelectorAll(
+        ".mission-card"
+    );
 
 const progressFill =
-    document.getElementById("progressFill");
+    document.getElementById(
+        "progressFill"
+    );
 
 const progressText =
-    document.getElementById("progressText");
+    document.getElementById(
+        "progressText"
+    );
 
 const finalReveal =
-    document.getElementById("finalReveal");
+    document.getElementById(
+        "finalReveal"
+    );
 
 let completedMissions = 0;
 
 
-missions.forEach(card => {
+missions.forEach(
+    card => {
 
-    const button =
-        card.querySelector(".mission-btn");
+        const button =
+            card.querySelector(
+                ".mission-btn"
+            );
 
 
-    button.addEventListener("click", () => {
-
-        if (card.classList.contains("completed")) {
+        if (!button) {
             return;
         }
 
 
-        /* Complete card */
+        button.addEventListener(
+            "click",
+            () => {
 
-        card.classList.add("completed");
-
-        button.textContent =
-            "✓ COMPLETED";
-
-
-        completedMissions++;
-
-
-        /* Progress */
-
-        const percentage =
-            (completedMissions / missions.length) * 100;
-
-        progressFill.style.width =
-            percentage + "%";
-
-        progressText.textContent =
-            completedMissions +
-            " / " +
-            missions.length;
+                if (
+                    card.classList.contains(
+                        "completed"
+                    )
+                ) {
+                    return;
+                }
 
 
-        /* Celebration */
-
-        missionBurst(card);
-
-
-        /* Final reveal */
-
-        if (
-            completedMissions ===
-            missions.length
-        ) {
-
-            setTimeout(() => {
-
-                finalReveal.classList.add(
-                    "active"
+                card.classList.add(
+                    "completed"
                 );
 
-                bigCelebration();
-
-            }, 1200);
-
-        }
-
-    });
-
-});
+                button.textContent =
+                    "✓ COMPLETED";
 
 
-/* =========================
+                completedMissions++;
+
+
+                const percentage =
+                    (
+                        completedMissions /
+                        missions.length
+                    ) * 100;
+
+
+                if (progressFill) {
+
+                    progressFill.style.width =
+                        percentage + "%";
+
+                }
+
+
+                if (progressText) {
+
+                    progressText.textContent =
+                        completedMissions +
+                        " / " +
+                        missions.length;
+
+                }
+
+
+                missionBurst(card);
+
+
+                if (
+                    completedMissions ===
+                    missions.length
+                ) {
+
+                    setTimeout(
+                        () => {
+
+                            if (
+                                finalReveal
+                            ) {
+
+                                finalReveal.classList.add(
+                                    "active"
+                                );
+
+                            }
+
+                            bigCelebration();
+
+                        },
+                        1000
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =================================
    MISSION PARTICLES
-========================= */
+================================= */
 
 function missionBurst(card) {
 
+    if (
+        prefersReducedMotion
+    ) {
+        return;
+    }
+
+
     const rect =
         card.getBoundingClientRect();
+
 
     const colors = [
         "#ff9933",
@@ -482,10 +703,26 @@ function missionBurst(card) {
     ];
 
 
-    for (let i = 0; i < 25; i++) {
+    const count =
+        isMobile
+            ? 10
+            : 20;
+
+
+    const fragment =
+        document.createDocumentFragment();
+
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
 
         const particle =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         particle.className =
             "firework";
@@ -507,7 +744,9 @@ function missionBurst(card) {
             Math.PI * 2;
 
         const distance =
-            Math.random() * 120 + 40;
+            Math.random() *
+            (isMobile ? 80 : 120) +
+            30;
 
 
         particle.style.setProperty(
@@ -516,7 +755,6 @@ function missionBurst(card) {
             distance +
             "px"
         );
-
 
         particle.style.setProperty(
             "--y",
@@ -535,27 +773,49 @@ function missionBurst(card) {
             ];
 
 
-        document.body.appendChild(
+        fragment.appendChild(
             particle
         );
 
-
-        setTimeout(() => {
-
-            particle.remove();
-
-        }, 1000);
-
     }
+
+
+    document.body.appendChild(
+        fragment
+    );
+
+
+    setTimeout(
+        () => {
+
+            document
+                .querySelectorAll(
+                    ".firework"
+                )
+                .forEach(
+                    particle =>
+                        particle.remove()
+                );
+
+        },
+        1000
+    );
 
 }
 
 
-/* =========================
+/* =================================
    FINAL CELEBRATION
-========================= */
+================================= */
 
 function bigCelebration() {
+
+    if (
+        prefersReducedMotion
+    ) {
+        return;
+    }
+
 
     const colors = [
         "#ff9933",
@@ -563,10 +823,11 @@ function bigCelebration() {
         "#138808"
     ];
 
+
     const particleCount =
-        window.innerWidth <= 600
-            ? 60
-            : 100;
+        isMobile
+            ? 30
+            : 80;
 
 
     const fragment =
@@ -580,10 +841,16 @@ function bigCelebration() {
         window.innerHeight / 2;
 
 
-    for (let i = 0; i < particleCount; i++) {
+    for (
+        let i = 0;
+        i < particleCount;
+        i++
+    ) {
 
         const particle =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         particle.className =
             "firework";
@@ -601,7 +868,9 @@ function bigCelebration() {
             Math.PI * 2;
 
         const distance =
-            Math.random() * 500 + 100;
+            Math.random() *
+            (isMobile ? 300 : 500) +
+            80;
 
 
         particle.style.setProperty(
@@ -636,46 +905,70 @@ function bigCelebration() {
     );
 
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        document
-            .querySelectorAll(
-                ".firework"
-            )
-            .forEach(
-                particle => particle.remove()
-            );
+            document
+                .querySelectorAll(
+                    ".firework"
+                )
+                .forEach(
+                    particle =>
+                        particle.remove()
+                );
 
-    }, 1300);
-
-}
-
-
-/* =========================
-   CLOSE REVEAL
-========================= */
-
-function closeReveal() {
-
-    finalReveal.classList.remove(
-        "active"
+        },
+        1300
     );
 
 }
+
+
+/* =================================
+   CLOSE REVEAL
+================================= */
+
+function closeReveal() {
+
+    if (finalReveal) {
+
+        finalReveal.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
 
 /* =================================
    3D FLAG MOUSE EFFECT
 ================================= */
 
 const flag =
-    document.querySelector(".flag");
-
+    document.querySelector(
+        ".flag"
+    );
 
 const flagWrapper =
-    document.querySelector(".flag-wrapper");
+    document.querySelector(
+        ".flag-wrapper"
+    );
 
 
-if (flag && flagWrapper) {
+if (
+    flag &&
+    flagWrapper &&
+    !isMobile &&
+    !isTouchDevice &&
+    !prefersReducedMotion
+) {
+
+    let flagFrame = null;
+
+    let flagTargetX = 0;
+    let flagTargetY = 0;
+
 
     flagWrapper.addEventListener(
         "mousemove",
@@ -683,6 +976,7 @@ if (flag && flagWrapper) {
 
             const rect =
                 flagWrapper.getBoundingClientRect();
+
 
             const x =
                 e.clientX - rect.left;
@@ -698,25 +992,37 @@ if (flag && flagWrapper) {
                 rect.height / 2;
 
 
-            const rotateY =
-                (x - centerX) /
-                20;
+            flagTargetY =
+                (x - centerX) / 20;
+
+            flagTargetX =
+                (centerY - y) / 20;
 
 
-            const rotateX =
-                (centerY - y) /
-                20;
+            if (!flagFrame) {
 
+                flagFrame =
+                    requestAnimationFrame(
+                        () => {
 
-            flag.style.animation =
-                "none";
+                            flag.style.animation =
+                                "none";
 
+                            flag.style.transform =
+                                `rotateX(${flagTargetX}deg)
+                                 rotateY(${flagTargetY}deg)
+                                 scale(1.03)`;
 
-            flag.style.transform =
-                `rotateX(${rotateX}deg)
-                 rotateY(${rotateY}deg)
-                 scale(1.03)`;
+                            flagFrame = null;
 
+                        }
+                    );
+
+            }
+
+        },
+        {
+            passive: true
         }
     );
 
@@ -728,13 +1034,17 @@ if (flag && flagWrapper) {
             flag.style.animation =
                 "flagFloat 4s ease-in-out infinite";
 
+            flag.style.transform =
+                "";
+
         }
     );
 
 }
 
+
 /* =================================
-   CINEMATIC SCROLL ENGINE
+   CINEMATIC SCROLL REVEAL
 ================================= */
 
 const revealElements =
@@ -743,37 +1053,52 @@ const revealElements =
     );
 
 
-const revealObserver =
-    new IntersectionObserver(
+if (
+    "IntersectionObserver" in window
+) {
 
-        (entries) => {
+    const revealObserver =
+        new IntersectionObserver(
+            (entries) => {
 
-            entries.forEach(entry => {
+                entries.forEach(
+                    entry => {
 
-                if (entry.isIntersecting) {
+                        if (
+                            entry.isIntersecting
+                        ) {
 
-                    entry.target.classList.add(
-                        "show"
-                    );
+                            entry.target.classList.add(
+                                "show"
+                            );
 
-                }
+                            revealObserver.unobserve(
+                                entry.target
+                            );
 
-            });
+                        }
 
-        },
+                    }
+                );
 
-        {
-            threshold: 0.15
-        }
+            },
+            {
+                threshold:
+                    isMobile
+                        ? 0.08
+                        : 0.15
+            }
+        );
 
+
+    revealElements.forEach(
+        element =>
+            revealObserver.observe(
+                element
+            )
     );
 
-
-revealElements.forEach(element => {
-
-    revealObserver.observe(element);
-
-});
+}
 
 
 /* =================================
@@ -781,73 +1106,96 @@ revealElements.forEach(element => {
 ================================= */
 
 const timeline =
-    document.querySelector(".timeline");
+    document.querySelector(
+        ".timeline"
+    );
 
 
-if (timeline) {
+if (
+    timeline &&
+    "IntersectionObserver" in window
+) {
 
     const timelineObserver =
         new IntersectionObserver(
-
             (entries) => {
 
-                entries.forEach(entry => {
+                entries.forEach(
+                    entry => {
 
-                    if (entry.isIntersecting) {
+                        if (
+                            entry.isIntersecting
+                        ) {
 
-                        timeline.classList.add(
-                            "show"
-                        );
+                            timeline.classList.add(
+                                "show"
+                            );
+
+                            timelineObserver.unobserve(
+                                timeline
+                            );
+
+                        }
 
                     }
-
-                });
+                );
 
             },
-
             {
-                threshold: .3
+                threshold:
+                    isMobile
+                        ? 0.15
+                        : 0.3
             }
-
         );
 
 
-    timelineObserver.observe(timeline);
+    timelineObserver.observe(
+        timeline
+    );
 
 }
+
 
 /* =================================
    INDIA 2047 EFFECT
 ================================= */
 
 const futureSection =
-    document.querySelector(".future-section");
+    document.querySelector(
+        ".future-section"
+    );
 
 const futureYear =
-    document.querySelector(".future-year");
+    document.querySelector(
+        ".future-year"
+    );
 
 
-if (futureSection && futureYear) {
+if (
+    futureSection &&
+    futureYear &&
+    !isMobile &&
+    !isTouchDevice &&
+    !prefersReducedMotion
+) {
 
-    window.addEventListener("scroll", () => {
+    let futureFrame = null;
+
+
+    function updateFutureYear() {
 
         const rect =
             futureSection.getBoundingClientRect();
-
-        const windowHeight =
-            window.innerHeight;
-
 
         const progress =
             Math.min(
                 Math.max(
                     1 -
                     rect.top /
-                    windowHeight,
-
+                    window.innerHeight,
                     0
                 ),
-
                 1
             );
 
@@ -867,20 +1215,45 @@ if (futureSection && futureYear) {
         futureYear.style.transform =
             `scale(${scale})`;
 
-
         futureYear.style.opacity =
             opacity;
 
-    });
+
+        futureFrame = null;
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        () => {
+
+            if (!futureFrame) {
+
+                futureFrame =
+                    requestAnimationFrame(
+                        updateFutureYear
+                    );
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
 
 }
+
 
 /* =================================
    INTERACTIVE INDIA MAP
 ================================= */
 
 const indiaMap =
-    document.getElementById("indiaMap");
+    document.getElementById(
+        "indiaMap"
+    );
 
 const mapContainer =
     document.querySelector(
@@ -888,7 +1261,19 @@ const mapContainer =
     );
 
 
-if (indiaMap && mapContainer) {
+if (
+    indiaMap &&
+    mapContainer &&
+    !isMobile &&
+    !isTouchDevice &&
+    !prefersReducedMotion
+) {
+
+    let mapFrame = null;
+
+    let mapX = 0;
+    let mapY = 0;
+
 
     mapContainer.addEventListener(
         "mousemove",
@@ -898,43 +1283,65 @@ if (indiaMap && mapContainer) {
                 mapContainer.getBoundingClientRect();
 
 
-            const x =
-                e.clientX - rect.left;
+            mapX =
+                e.clientX -
+                rect.left;
 
-            const y =
-                e.clientY - rect.top;
-
-
-            const centerX =
-                rect.width / 2;
-
-            const centerY =
-                rect.height / 2;
+            mapY =
+                e.clientY -
+                rect.top;
 
 
-            const rotateX =
-                (centerY - y) / 25;
+            if (!mapFrame) {
 
-            const rotateY =
-                (x - centerX) / 25;
+                mapFrame =
+                    requestAnimationFrame(
+                        () => {
+
+                            const centerX =
+                                rect.width / 2;
+
+                            const centerY =
+                                rect.height / 2;
 
 
-            indiaMap.style.transform =
-                `
-                rotateX(${rotateX}deg)
-                rotateY(${rotateY}deg)
-                scale(1.04)
-                `;
+                            const rotateX =
+                                (centerY - mapY) /
+                                25;
 
-            indiaMap.style.filter =
-                `
-                brightness(0)
-                invert(1)
-                drop-shadow(
-                    0 0 25px #ff9933
-                )
-                `;
+                            const rotateY =
+                                (mapX - centerX) /
+                                25;
 
+
+                            indiaMap.style.transform =
+                                `
+                                rotateX(${rotateX}deg)
+                                rotateY(${rotateY}deg)
+                                scale(1.04)
+                                `;
+
+
+                            indiaMap.style.filter =
+                                `
+                                brightness(0)
+                                invert(1)
+                                drop-shadow(
+                                    0 0 25px #ff9933
+                                )
+                                `;
+
+
+                            mapFrame = null;
+
+                        }
+                    );
+
+            }
+
+        },
+        {
+            passive: true
         }
     );
 
@@ -981,69 +1388,95 @@ const infoText =
     );
 
 
-nodes.forEach((node, index) => {
+nodes.forEach(
+    node => {
 
-    node.addEventListener(
-        "mouseenter",
-        () => {
+        const updateInfo =
+            () => {
 
-            infoTitle.textContent =
-                node.dataset.title;
+                if (infoTitle) {
 
-            infoText.textContent =
-                node.dataset.text;
+                    infoTitle.textContent =
+                        node.dataset.title ||
+                        "";
 
-        }
-    );
-
-
-    node.addEventListener(
-        "click",
-        () => {
-
-            infoTitle.textContent =
-                node.dataset.title;
-
-            infoText.textContent =
-                node.dataset.text;
-
-            node.animate(
-
-                [
-                    {
-                        transform:
-                            "scale(1)"
-                    },
-
-                    {
-                        transform:
-                            "scale(1.8)"
-                    },
-
-                    {
-                        transform:
-                            "scale(1)"
-                    }
-
-                ],
-
-                {
-                    duration: 500
                 }
 
-            );
+                if (infoText) {
 
-        }
-    );
+                    infoText.textContent =
+                        node.dataset.text ||
+                        "";
 
-});
+                }
+
+            };
+
+
+        node.addEventListener(
+            "mouseenter",
+            updateInfo
+        );
+
+
+        node.addEventListener(
+            "click",
+            () => {
+
+                updateInfo();
+
+
+                if (
+                    prefersReducedMotion
+                ) {
+                    return;
+                }
+
+
+                node.animate(
+                    [
+                        {
+                            transform:
+                                "scale(1)"
+                        },
+
+                        {
+                            transform:
+                                "scale(1.8)"
+                        },
+
+                        {
+                            transform:
+                                "scale(1)"
+                        }
+
+                    ],
+                    {
+                        duration:
+                            isMobile
+                                ? 300
+                                : 500,
+
+                        easing:
+                            "ease-out"
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+
 
 /* =================================
    CINEMATIC LOADING SYSTEM
 ================================= */
 
 const loader =
-    document.getElementById("loader");
+    document.getElementById(
+        "loader"
+    );
 
 const loaderProgress =
     document.getElementById(
@@ -1073,7 +1506,6 @@ const bgMusic =
 
 let loadingValue = 0;
 
-
 const loadingMessages = [
 
     "SYSTEM INITIALIZING",
@@ -1089,114 +1521,156 @@ const loadingMessages = [
 ];
 
 
-const loadingTimer =
-    setInterval(() => {
+if (
+    loader &&
+    loaderProgress &&
+    loaderPercent &&
+    loaderStatus &&
+    enterIndia
+) {
 
-        loadingValue++;
+    /*
+       Slightly faster on mobile.
+       The loader still feels cinematic.
+    */
 
-        loaderProgress.style.width =
-            loadingValue + "%";
-
-        loaderPercent.textContent =
-            loadingValue;
-
-
-        if (
-            loadingValue % 20 === 0
-        ) {
-
-            const messageIndex =
-                Math.min(
-                    loadingValue / 20 - 1,
-                    loadingMessages.length - 1
-                );
-
-            loaderStatus.textContent =
-                loadingMessages[
-                    messageIndex
-                ];
-
-        }
+    const loadingStep =
+        isMobile
+            ? 50
+            : 35;
 
 
-        if (loadingValue >= 100) {
+    const loadingTimer =
+        setInterval(
+            () => {
 
-            clearInterval(
-                loadingTimer
-            );
+                loadingValue++;
 
 
-            loaderStatus.textContent =
-                "SYSTEM READY";
+                loaderProgress.style.width =
+                    loadingValue + "%";
 
-            enterIndia.classList.add(
-                "ready"
-            );
 
-        }
+                loaderPercent.textContent =
+                    loadingValue;
 
-    }, 35);
+
+                if (
+                    loadingValue % 20 === 0
+                ) {
+
+                    const messageIndex =
+                        Math.min(
+                            loadingValue / 20 - 1,
+                            loadingMessages.length - 1
+                        );
+
+
+                    loaderStatus.textContent =
+                        loadingMessages[
+                            messageIndex
+                        ];
+
+                }
+
+
+                if (
+                    loadingValue >= 100
+                ) {
+
+                    clearInterval(
+                        loadingTimer
+                    );
+
+
+                    loaderStatus.textContent =
+                        "SYSTEM READY";
+
+
+                    enterIndia.classList.add(
+                        "ready"
+                    );
+
+                }
+
+            },
+            loadingStep
+        );
+
 
     /* =================================
-   ENTER INDIA
-================================= */
+       ENTER INDIA
+    ================================= */
 
-enterIndia.addEventListener(
-    "click",
-    async () => {
+    enterIndia.addEventListener(
+        "click",
+        async () => {
 
-        /* START MUSIC */
+            if (bgMusic) {
 
-        if (bgMusic) {
+                bgMusic.volume =
+                    0.35;
 
-            bgMusic.volume = 0.35;
 
-            try {
+                try {
 
-                await bgMusic.play();
+                    await bgMusic.play();
 
-            } catch (error) {
+                } catch (error) {
 
-                console.log(
-                    "Audio could not start."
+                    console.log(
+                        "Audio could not start."
+                    );
+
+                }
+
+            }
+
+
+            loader.classList.add(
+                "hide"
+            );
+
+
+            if (
+                typeof bigCelebration ===
+                "function"
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        bigCelebration();
+
+                    },
+                    isMobile
+                        ? 400
+                        : 700
                 );
 
             }
 
         }
+    );
 
+}
 
-        /* HIDE LOADER */
-
-        loader.classList.add(
-            "hide"
-        );
-
-
-        /* START CELEBRATION */
-
-        if (typeof bigCelebration === "function") {
-
-            setTimeout(() => {
-
-                bigCelebration();
-
-            }, 700);
-
-        }
-
-    }
-);
 
 /* =================================
    CUSTOM CURSOR
+   DESKTOP ONLY
 ================================= */
 
 const cursorDot =
-    document.querySelector(".cursor-dot");
+    document.querySelector(
+        ".cursor-dot"
+    );
 
 const cursorRing =
-    document.querySelector(".cursor-ring");
+    document.querySelector(
+        ".cursor-ring"
+    );
+
 
 let mouseX = 0;
 let mouseY = 0;
@@ -1204,19 +1678,27 @@ let mouseY = 0;
 let cursorX = 0;
 let cursorY = 0;
 
-let cursorAnimation;
+let cursorAnimation = null;
 
 
-function updateCursor() {
+if (
+    cursorDot &&
+    cursorRing &&
+    !isMobile &&
+    !isTouchDevice &&
+    !prefersReducedMotion
+) {
 
-    cursorX +=
-        (mouseX - cursorX) * 0.18;
+    function updateCursor() {
 
-    cursorY +=
-        (mouseY - cursorY) * 0.18;
+        cursorX +=
+            (mouseX - cursorX) *
+            0.18;
 
+        cursorY +=
+            (mouseY - cursorY) *
+            0.18;
 
-    if (cursorDot) {
 
         cursorDot.style.transform =
             `translate3d(
@@ -1225,10 +1707,6 @@ function updateCursor() {
                 0
             )`;
 
-    }
-
-
-    if (cursorRing) {
 
         cursorRing.style.transform =
             `translate3d(
@@ -1237,79 +1715,105 @@ function updateCursor() {
                 0
             )`;
 
+
+        cursorAnimation =
+            requestAnimationFrame(
+                updateCursor
+            );
+
     }
 
-
-    cursorAnimation =
-        requestAnimationFrame(
-            updateCursor
-        );
-
-}
-
-
-if (
-    cursorDot &&
-    cursorRing &&
-    window.matchMedia(
-        "(pointer: fine)"
-    ).matches
-) {
 
     document.addEventListener(
         "mousemove",
         (e) => {
 
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            mouseX =
+                e.clientX;
+
+            mouseY =
+                e.clientY;
 
         },
-        { passive: true }
+        {
+            passive: true
+        }
     );
 
 
     updateCursor();
 
-}
 
-/* =================================
-   CURSOR HOVER
-================================= */
+    document.addEventListener(
+        "visibilitychange",
+        () => {
 
-const interactiveElements =
-    document.querySelectorAll(
-        "button, a, .card, .mission-card, .tech-node"
+            if (
+                document.hidden
+            ) {
+
+                if (
+                    cursorAnimation
+                ) {
+
+                    cancelAnimationFrame(
+                        cursorAnimation
+                    );
+
+                    cursorAnimation =
+                        null;
+
+                }
+
+            } else if (
+                !cursorAnimation
+            ) {
+
+                updateCursor();
+
+            }
+
+        }
     );
 
 
-interactiveElements.forEach(
-    element => {
-
-        element.addEventListener(
-            "mouseenter",
-            () => {
-
-                cursorRing.classList.add(
-                    "hover"
-                );
-
-            }
+    const interactiveElements =
+        document.querySelectorAll(
+            "button, a, .card, .mission-card, .tech-node"
         );
 
 
-        element.addEventListener(
-            "mouseleave",
-            () => {
+    interactiveElements.forEach(
+        element => {
 
-                cursorRing.classList.remove(
-                    "hover"
-                );
+            element.addEventListener(
+                "mouseenter",
+                () => {
 
-            }
-        );
+                    cursorRing.classList.add(
+                        "hover"
+                    );
 
-    }
-);
+                }
+            );
+
+
+            element.addEventListener(
+                "mouseleave",
+                () => {
+
+                    cursorRing.classList.remove(
+                        "hover"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
 
 /* =================================
    15 AUGUST COUNTDOWN
@@ -1321,87 +1825,152 @@ const targetDate =
     ).getTime();
 
 
+const daysElement =
+    document.getElementById(
+        "days"
+    );
+
+const hoursElement =
+    document.getElementById(
+        "hours"
+    );
+
+const minutesElement =
+    document.getElementById(
+        "minutes"
+    );
+
+const secondsElement =
+    document.getElementById(
+        "seconds"
+    );
+
+
+let countdownFinished = false;
+
+
 function updateCountdown() {
 
-    const now =
-        new Date().getTime();
+    const difference =
+        targetDate -
+        Date.now();
 
 
-    let difference =
-        targetDate - now;
+    if (
+        difference <= 0
+    ) {
+
+        if (
+            countdownFinished
+        ) {
+            return;
+        }
 
 
-    if (difference <= 0) {
+        countdownFinished =
+            true;
 
-        const countdown = document.querySelector(".countdown");
+
+        const countdown =
+            document.querySelector(
+                ".countdown"
+            );
+
 
         if (countdown) {
+
             countdown.innerHTML = `
                 <div class="celebration-countdown">
                     <span>🇮🇳</span>
-                    <strong>HAPPY INDEPENDENCE DAY</strong>
-                    <small>15 AUGUST 2026</small>
+                    <strong>
+                        HAPPY INDEPENDENCE DAY
+                    </strong>
+                    <small>
+                        15 AUGUST 2026
+                    </small>
                 </div>
             `;
+
         }
 
         return;
+
     }
 
 
     const days =
         Math.floor(
             difference /
-            (1000 * 60 * 60 * 24)
+            86400000
         );
 
 
     const hours =
         Math.floor(
             (difference %
-                (1000 * 60 * 60 * 24)) /
-            (1000 * 60 * 60)
+                86400000) /
+            3600000
         );
 
 
     const minutes =
         Math.floor(
             (difference %
-                (1000 * 60 * 60)) /
-            (1000 * 60)
+                3600000) /
+            60000
         );
 
 
     const seconds =
         Math.floor(
             (difference %
-                (1000 * 60)) /
+                60000) /
             1000
         );
 
 
-    document.getElementById(
-        "days"
-    ).textContent =
-        String(days).padStart(2, "0");
+    if (daysElement) {
+
+        daysElement.textContent =
+            String(days).padStart(
+                2,
+                "0"
+            );
+
+    }
 
 
-    document.getElementById(
-        "hours"
-    ).textContent =
-        String(hours).padStart(2, "0");
+    if (hoursElement) {
+
+        hoursElement.textContent =
+            String(hours).padStart(
+                2,
+                "0"
+            );
+
+    }
 
 
-    document.getElementById(
-        "minutes"
-    ).textContent =
-        String(minutes).padStart(2, "0");
+    if (minutesElement) {
+
+        minutesElement.textContent =
+            String(minutes).padStart(
+                2,
+                "0"
+            );
+
+    }
 
 
-    document.getElementById(
-        "seconds"
-    ).textContent =
-        String(seconds).padStart(2, "0");
+    if (secondsElement) {
+
+        secondsElement.textContent =
+            String(seconds).padStart(
+                2,
+                "0"
+            );
+
+    }
 
 }
 
@@ -1409,10 +1978,12 @@ function updateCountdown() {
 updateCountdown();
 
 
-setInterval(
-    updateCountdown,
-    1000
-);
+const countdownTimer =
+    setInterval(
+        updateCountdown,
+        1000
+    );
+
 
 /* =================================
    SOUND TOGGLE
@@ -1424,9 +1995,11 @@ const soundToggle =
     );
 
 
-if (soundToggle && bgMusic) {
+if (
+    soundToggle &&
+    bgMusic
+) {
 
-    // Initial accessibility state
     soundToggle.setAttribute(
         "aria-label",
         "Turn background music on"
@@ -1442,25 +2015,29 @@ if (soundToggle && bgMusic) {
         "click",
         async () => {
 
-            if (bgMusic.paused) {
+            if (
+                bgMusic.paused
+            ) {
 
                 try {
 
                     await bgMusic.play();
 
+
                     soundToggle.textContent =
                         "🔊 SOUND ON";
+
 
                     soundToggle.classList.add(
                         "active"
                     );
 
 
-                    // Accessibility state
                     soundToggle.setAttribute(
                         "aria-label",
                         "Turn background music off"
                     );
+
 
                     soundToggle.setAttribute(
                         "aria-pressed",
@@ -1480,19 +2057,21 @@ if (soundToggle && bgMusic) {
 
                 bgMusic.pause();
 
+
                 soundToggle.textContent =
                     "🔇 SOUND OFF";
+
 
                 soundToggle.classList.remove(
                     "active"
                 );
 
 
-                // Accessibility state
                 soundToggle.setAttribute(
                     "aria-label",
                     "Turn background music on"
                 );
+
 
                 soundToggle.setAttribute(
                     "aria-pressed",
@@ -1505,3 +2084,39 @@ if (soundToggle && bgMusic) {
     );
 
 }
+
+
+/* =================================
+   PAGE VISIBILITY
+================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.hidden
+        ) {
+
+            /*
+               Don't keep unnecessary
+               visual work running.
+            */
+
+            if (
+                cursorAnimation
+            ) {
+
+                cancelAnimationFrame(
+                    cursorAnimation
+                );
+
+                cursorAnimation =
+                    null;
+
+            }
+
+        }
+
+    }
+);
