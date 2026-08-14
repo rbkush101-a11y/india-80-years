@@ -3732,3 +3732,40 @@ a:focus-visible {
     }
 
 }
+
+/* =================================
+   PERFORMANCE - LAYOUT STABILITY
+================================= */
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+button {
+    font: inherit;
+}
+
+/* Prevent common layout shifts */
+
+.navbar {
+    min-height: 70px;
+}
+
+.hero {
+    min-height: 100vh;
+}
+
+.sound-toggle {
+    min-width: 105px;
+    min-height: 36px;
+}
+
+.countdown {
+    min-height: 80px;
+}

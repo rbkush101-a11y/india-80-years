@@ -1,90 +1,263 @@
+/* =================================
+   PARTICLE BACKGROUND
+================================= */
+
 const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+if (canvas) {
 
-let particles = [];
+    const ctx = canvas.getContext("2d");
 
-const colors = [
-    "#ff9933",
-    "#ffffff",
-    "#138808"
-];
+    let particles = [];
+    let animationFrame;
+    let isRunning = true;
 
-for (let i = 0; i < 150; i++) {
-
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-
-        size: Math.random() * 2 + 1,
-
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
-
-        color: colors[
-            Math.floor(Math.random() * colors.length)
-        ]
-    });
-
-}
+    const colors = [
+        "#ff9933",
+        "#ffffff",
+        "#138808"
+    ];
 
 
-function animate() {
+    /* -----------------------------
+       CANVAS SIZE
+    ----------------------------- */
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    function resizeCanvas() {
 
-    particles.forEach(p => {
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            p.size,
-            0,
-            Math.PI * 2
+        const dpr = Math.min(
+            window.devicePixelRatio || 1,
+            2
         );
 
-        ctx.fillStyle = p.color;
+        canvas.width =
+            window.innerWidth * dpr;
+
+        canvas.height =
+            window.innerHeight * dpr;
+
+        canvas.style.width =
+            window.innerWidth + "px";
+
+        canvas.style.height =
+            window.innerHeight + "px";
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+        createParticles();
+    }
+
+
+    /* -----------------------------
+       ADAPTIVE PARTICLE COUNT
+    ----------------------------- */
+
+    function getParticleCount() {
+
+        if (window.innerWidth <= 600) {
+            return 50;
+        }
+
+        if (window.innerWidth <= 1000) {
+            return 80;
+        }
+
+        return 110;
+    }
+
+
+    /* -----------------------------
+       CREATE PARTICLES
+    ----------------------------- */
+
+    function createParticles() {
+
+        particles = [];
+
+        const count =
+            getParticleCount();
+
+        for (let i = 0; i < count; i++) {
+
+            particles.push({
+
+                x:
+                    Math.random() *
+                    window.innerWidth,
+
+                y:
+                    Math.random() *
+                    window.innerHeight,
+
+                size:
+                    Math.random() * 2 + 1,
+
+                speedX:
+                    (Math.random() - 0.5) * 0.4,
+
+                speedY:
+                    (Math.random() - 0.5) * 0.4,
+
+                color:
+                    colors[
+                        Math.floor(
+                            Math.random() *
+                            colors.length
+                        )
+                    ]
+
+            });
+
+        }
+
+    }
+
+
+    /* -----------------------------
+       ANIMATION
+    ----------------------------- */
+
+    function animate() {
+
+        if (!isRunning) {
+            return;
+        }
+
+        ctx.clearRect(
+            0,
+            0,
+            window.innerWidth,
+            window.innerHeight
+        );
 
         ctx.globalAlpha = 0.7;
 
-        ctx.fill();
 
-        p.x += p.speedX;
-        p.y += p.speedY;
+        particles.forEach(p => {
+
+            ctx.beginPath();
+
+            ctx.arc(
+                p.x,
+                p.y,
+                p.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                p.color;
+
+            ctx.fill();
 
 
-        if (p.x < 0 || p.x > canvas.width) {
-            p.speedX *= -1;
+            p.x += p.speedX;
+            p.y += p.speedY;
+
+
+            if (
+                p.x < 0 ||
+                p.x > window.innerWidth
+            ) {
+
+                p.speedX *= -1;
+
+            }
+
+
+            if (
+                p.y < 0 ||
+                p.y > window.innerHeight
+            ) {
+
+                p.speedY *= -1;
+
+            }
+
+        });
+
+
+        animationFrame =
+            requestAnimationFrame(
+                animate
+            );
+
+    }
+
+
+    /* -----------------------------
+       START
+    ----------------------------- */
+
+    resizeCanvas();
+
+    animate();
+
+
+    /* -----------------------------
+       RESIZE
+    ----------------------------- */
+
+    let resizeTimer;
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            clearTimeout(
+                resizeTimer
+            );
+
+            resizeTimer =
+                setTimeout(
+                    resizeCanvas,
+                    150
+                );
+
         }
+    );
 
-        if (p.y < 0 || p.y > canvas.height) {
-            p.speedY *= -1;
+
+    /* -----------------------------
+       PAUSE WHEN TAB IS HIDDEN
+    ----------------------------- */
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+
+            if (document.hidden) {
+
+                isRunning = false;
+
+                cancelAnimationFrame(
+                    animationFrame
+                );
+
+            } else {
+
+                isRunning = true;
+
+                animate();
+
+            }
+
         }
+    );
 
-    });
-
-    requestAnimationFrame(animate);
 }
 
-animate();
 
-
-window.addEventListener("resize", () => {
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-});
-
+/* =================================
+   START EXPERIENCE
+================================= */
 
 function startExperience() {
 
